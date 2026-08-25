@@ -58,10 +58,8 @@ fun ProfilesScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         // Profile details
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = DarkCard),
-            shape = RoundedCornerShape(12.dp)
+        DetailsCard(
+            modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
@@ -142,16 +140,14 @@ private fun DetailRow(label: String, value: String) {
 }
 
 @Composable
-private fun Card(
+private fun DetailsCard(
     modifier: Modifier = Modifier,
-    colors: androidx.compose.material3.CardColors = CardDefaults.cardColors(),
-    shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(12.dp),
     content: @Composable () -> Unit
 ) {
     androidx.compose.material3.Card(
         modifier = modifier,
-        colors = colors,
-        shape = shape
+        colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = DarkCard),
+        shape = RoundedCornerShape(12.dp)
     ) {
         content()
     }

@@ -116,7 +116,7 @@ class ThermalManager(private val context: Context) {
         return try {
             when (powerManager!!.currentThermalStatus) {
                 PowerManager.THERMAL_STATUS_NONE -> SystemThermalStatus.NONE
-                PowerManager.THERMAL_STATUS_LOW -> SystemThermalStatus.LOW
+                PowerManager.THERMAL_STATUS_LIGHT -> SystemThermalStatus.LOW
                 PowerManager.THERMAL_STATUS_MODERATE -> SystemThermalStatus.MODERATE
                 PowerManager.THERMAL_STATUS_SEVERE -> SystemThermalStatus.SEVERE
                 PowerManager.THERMAL_STATUS_CRITICAL -> SystemThermalStatus.CRITICAL

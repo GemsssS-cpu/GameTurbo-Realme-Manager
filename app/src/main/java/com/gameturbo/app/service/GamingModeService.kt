@@ -47,15 +47,15 @@ class GamingModeService : Service() {
     private var sessionStartTemp: Float = 0f
     private var sessionStartBattery: Int = 0
 
-    private val _isActive = MutableStateFlow(false)
-    val isActive: StateFlow<Boolean> = _isActive.asStateFlow()
-
-    private val _currentGame = MutableStateFlow<String?>(null)
-    val currentGame: StateFlow<String?> = _currentGame.asStateFlow()
-
     companion object {
         private const val CHANNEL_ID = "gaming_mode_channel"
         private const val NOTIFICATION_ID = 1001
+
+        private val _isActive = MutableStateFlow(false)
+        val isActive: StateFlow<Boolean> = _isActive.asStateFlow()
+
+        private val _currentGame = MutableStateFlow<String?>(null)
+        val currentGame: StateFlow<String?> = _currentGame.asStateFlow()
 
         fun start(context: Context) {
             val intent = Intent(context, GamingModeService::class.java)
@@ -75,7 +75,7 @@ class GamingModeService : Service() {
         processHelper = ProcessHelper(this)
         gameRepository = GameRepository(this)
 
-        val db = com.gameturbo.app.data.AppDatabase.getInstance(this)
+        val db = AppDatabase.getInstance(this)
         sessionRepository = SessionHistoryRepository(db.sessionDao())
 
         createNotificationChannel()
@@ -147,7 +147,6 @@ class GamingModeService : Service() {
         if (profile.keepScreenAwake) {
             acquireWakeLock()
         }
-
         if (profile.silenceNotifications) {
             tryDndMode(true)
         }
@@ -183,18 +182,22 @@ class GamingModeService : Service() {
             val notificationManager = getSystemService(NotificationManager::class.java) ?: return
             if (!notificationManager.isNotificationPolicyAccessGranted) return
 
-            val policy = NotificationManager.Policy(
-                if (enable) NotificationManager.Policy.PRIORITY_CATEGORY_CALLS or
-                    NotificationManager.Policy.PRIORITY_CATEGORY_MESSAGES
-                else NotificationManager.Policy.PRIORITY_CATEGORY_ALL,
-                NotificationManager.Policy.PRIORITY_SENDERS_STARRED,
-                NotificationManager.Policy.PRIORITY_SENDERS_STARRED
-            )
-            notificationManager.setInterruptionFilter(
-                if (enable) NotificationManager.INTERRUPTION_FILTER_PRIORITY
-                else NotificationManager.INTERRUPTION_FILTER_ALL
-            )
-            notificationManager.setNotificationPolicy(policy)
+            if (enable) {
+                val policy = NotificationManager.Policy(
+                    NotificationManager.Policy.PRIORITY_CATEGORY_CALLS or
+                        NotificationManager.Policy.PRIORITY_CATEGORY_MESSAGES,
+                    NotificationManager.Policy.PRIORITY_SENDERS_STARRED,
+                    NotificationManager.Policy.PRIORITY_SENDERS_STARRED
+                )
+                notificationManager.setNotificationPolicy(policy)
+                notificationManager.setInterruptionFilter(
+                    NotificationManager.INTERRUPTION_FILTER_PRIORITY
+                )
+            } else {
+                notificationManager.setInterruptionFilter(
+                    NotificationManager.INTERRUPTION_FILTER_ALL
+                )
+            }
         } catch (e: Exception) {
             // DND permission not granted
         }
@@ -202,7 +205,7 @@ class GamingModeService : Service() {
 
     private fun startMonitoring() {
         monitoringJob = serviceScope.launch {
-            while (isActive) {
+            while (true) {
                 val profile = ProfileManager.getCurrentProfile()
 
                 val thermalInfo = thermalManager.update()
@@ -238,7 +241,7 @@ class GamingModeService : Service() {
             val selectedPackages = gameRepository.getSelectedGamePackages()
             if (selectedPackages.isEmpty()) return@launch
 
-            while (isActive) {
+            while (true) {
                 val foregroundPkg = processHelper.getForegroundAppPackage()
                 val isGaming = foregroundPkg != null && selectedPackages.contains(foregroundPkg)
 
@@ -265,7 +268,7 @@ class GamingModeService : Service() {
 
     private fun startPeriodicCleanup() {
         processCleanupJob = serviceScope.launch {
-            while (isActive) {
+            while (true) {
                 processHelper.killBackgroundProcesses(gameRepository.getSelectedGamePackages())
                 delay(30000L)
             }
@@ -303,7 +306,6 @@ class GamingModeService : Service() {
         if (sessionStartTime == 0L) return
 
         val thermalInfo = thermalManager.thermalInfo.value
-        val batteryInfo = batteryMonitor.batteryInfo.value
         val pkg = currentGamePackage ?: return
         val gameName = try {
             packageManager.getApplicationLabel(

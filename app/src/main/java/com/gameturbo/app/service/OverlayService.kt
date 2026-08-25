@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
 import android.view.*
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.gameturbo.app.MainActivity
 import com.gameturbo.app.R
@@ -31,12 +32,12 @@ class OverlayService : Service() {
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var updateJob: Job? = null
 
-    private val _isActive = MutableStateFlow(false)
-    val isActive: StateFlow<Boolean> = _isActive.asStateFlow()
-
     companion object {
         private const val CHANNEL_ID = "overlay_channel"
         private const val NOTIFICATION_ID = 1002
+
+        private val _isActive = MutableStateFlow(false)
+        val isActive: StateFlow<Boolean> = _isActive.asStateFlow()
 
         fun start(context: Context) {
             if (!Settings.canDrawOverlays(context)) return
@@ -184,11 +185,6 @@ class OverlayService : Service() {
 
         val thermalInfo = thermalManager.update()
         val memInfo = memoryMonitor.update()
-
-        view.findViewById<TextView>(R.id.temp_text)?.let {
-            it.text = "Temp: ${thermalInfo.batteryTemperature.toInt()}°C (${thermalInfo.thermalLevel.name})"
-            it.setTextColor(getThermalColor(thermalInfo.thermalLevel.name))
-        }
 
         view.findViewWithTag<TextView>("temp")?.let {
             it.text = "Temp: ${thermalInfo.batteryTemperature.toInt()}°C"
