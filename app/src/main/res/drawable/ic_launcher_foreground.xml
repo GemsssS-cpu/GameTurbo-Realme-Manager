@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Game controller shape -->
+    <path
+        android:fillColor="#58A6FF"
+        android:pathData="M38,42 C38,38 42,35 46,35 L62,35 C66,35 70,38 70,42 L70,48 C70,52 68,55 65,57 L62,59 L58,62 L50,62 L46,59 L43,57 C40,55 38,52 38,48 Z" />
+    <!-- Left stick -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M44,44 m-3,0 a3,3 0,1 1,6 0 a3,3 0,1 1,-6 0" />
+    <!-- Right stick -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M64,44 m-3,0 a3,3 0,1 1,6 0 a3,3 0,1 1,-6 0" />
+    <!-- D-pad -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M42,50 L46,50 L46,48 L48,48 L48,50 L52,50 L52,52 L48,52 L48,54 L46,54 L46,52 L42,52 Z" />
+    <!-- Buttons -->
+    <path
+        android:fillColor="#F44336"
+        android:pathData="M62,48 m-1.5,0 a1.5,1.5 0,1 1,3 0 a1.5,1.5 0,1 1,-3 0" />
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M66,50 m-1.5,0 a1.5,1.5 0,1 1,3 0 a1.5,1.5 0,1 1,-3 0" />
+</vector>
