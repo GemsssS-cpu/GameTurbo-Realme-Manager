@@ -13,6 +13,7 @@ import android.os.PowerManager
 import android.provider.Settings
 import com.gameturbo.app.MainActivity
 import com.gameturbo.app.R
+import com.gameturbo.app.data.AppDatabase
 import com.gameturbo.app.data.GameRepository
 import com.gameturbo.app.data.SessionHistoryRepository
 import com.gameturbo.app.data.GameSession
